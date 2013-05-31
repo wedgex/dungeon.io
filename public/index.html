@@ -8,8 +8,15 @@
 		  var players = [];
 
 		  var redrawPlayerList = function() {
-		  	players.forEach(function(player) {
+		  	var playersList = document.getElementById('players');
+		  	playersList.innerHTML = "";
 
+		  	players.forEach(function(player) {		  		
+		  		var li = document.createElement("li"),
+		  			  playerText = document.createTextNode(player.name);
+
+		  		li.appendChild(playerText);
+		  		playersList.appendChild(li);
 		  	});
 		  };
 
@@ -20,10 +27,21 @@
 
 		  socket.on("player joined", function(player) {
 		  	players.push(player);
+		  	
 		  	// TODO hook this up with an event
+		  	redrawPlayerList();
+		  });
+
+		  socket.on("player left", function(playerThatLeft) {
+		  	// TODO uhh no.
+		  	players = players.filter(function(player) {
+		  		return player.name != playerThatLeft.name;
+		  	});
+
+		  	redrawPlayerList();
 		  });
 
 		</script>
-		<div id="players"></div>
+		<ul id="players"></ul>
 	</body>
 </html>

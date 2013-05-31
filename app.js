@@ -10,10 +10,18 @@ app.get("/", function(request, response) {
 });
 
 io.sockets.on("connection", function(socket) {
+	
 	socket.on("player join", function(name) {
-		console.log(name);
-		socket.set('name', name);
-		io.sockets.emit('player joined', { name: name, x: 0, y: 0 });
+		var player = { name: name, x: 0, y: 0 };
+
+		socket.set('player', player);
+		io.sockets.emit('player joined', player);
+	});
+
+	socket.on("disconnect", function() {
+		socket.get('player', function(err, player) {
+			io.sockets.emit('player left', player);
+		});
 	});
 });
 
