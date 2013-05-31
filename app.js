@@ -1,7 +1,8 @@
 var express = require("express"),
     app = express(),
 		server = require("http").createServer(app),
-		io = require("socket.io").listen(server);
+		io = require("socket.io").listen(server),
+		_ = require("underscore");
 
 app.use(express.static(__dirname + "/public"));
 
@@ -26,21 +27,14 @@ io.sockets.on("connection", function(socket) {
 	});
 
 	socket.on("disconnect", function() {
-		// ew
-		var player;
-
-		players.forEach(function(p) {
-			if (p.id == socket.id) {
-				player =  p;
-			}
+		var player = _.find(players, function(p) {
+			return p.id == socket.id;
 		});
 
-		// TODO yeesh
-		players = players.filter(function(player) {
-		  return player.id != socket.id;
+		players = _.reject(players, function(p) {
+			return p.id == player.id;
 		});
 
-		console.log(player);
 		io.sockets.emit('player left', player);
 	});
 });
