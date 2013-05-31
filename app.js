@@ -5,6 +5,9 @@ var express = require("express"),
 
 app.use(express.static(__dirname + "/public"));
 
+// TODO reids or something
+var players = [];
+
 app.get("/", function(request, response) {
 	response.render('index.html');
 });
@@ -12,16 +15,29 @@ app.get("/", function(request, response) {
 io.sockets.on("connection", function(socket) {
 	
 	socket.on("player join", function(name) {
-		var player = { name: name, x: 0, y: 0 };
+		var player = { id: socket.id ,name: name, x: 0, y: 0 };
 
-		socket.set('player', player);
+		players.push(player);
 		io.sockets.emit('player joined', player);
 	});
 
 	socket.on("disconnect", function() {
-		socket.get('player', function(err, player) {
-			io.sockets.emit('player left', player);
+		// ew
+		var player;
+
+		players.forEach(function(p) {
+			if (p.id == socket.id) {
+				player =  p;
+			}
 		});
+
+		// TODO yeesh
+		players = players.filter(function(player) {
+		  return player.id != socket.id;
+		});
+
+		console.log(player);
+		io.sockets.emit('player left', player);
 	});
 });
 

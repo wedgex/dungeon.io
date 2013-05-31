@@ -35,7 +35,7 @@
 		  socket.on("player left", function(playerThatLeft) {
 		  	// TODO uhh no.
 		  	players = players.filter(function(player) {
-		  		return player.name != playerThatLeft.name;
+		  		return player.id != playerThatLeft.id;
 		  	});
 
 		  	redrawPlayerList();
