@@ -1,6 +1,7 @@
 {
 	"name": "dungeon.io",
 	"dependencies": {
-			"express": "~3.2.4"
+			"express": "~3.2.4",
+			"socket.io": "~0.9.14"
 	}
 }
