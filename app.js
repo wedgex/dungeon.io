@@ -10,7 +10,13 @@ app.get("/", function(request, response) {
 });
 
 io.sockets.on("connection", function(socket) {
-	socket.emit('player', { x: 0, y: 0 });
+	socket.on("player join", function(name) {
+		console.log(name);
+		socket.set('name', name);
+		io.sockets.emit('player joined', { name: name, x: 0, y: 0 });
+	});
 });
+
+
 
 server.listen(process.env.PORT || 8383);

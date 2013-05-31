@@ -5,10 +5,25 @@
 	<body>
 		<script>
 		  var socket = io.connect("/");
+		  var players = [];
+
+		  var redrawPlayerList = function() {
+		  	players.forEach(function(player) {
+
+		  	});
+		  };
+
 		  socket.on("connect", function() {
-		  	console.log("connected!");
-		  })
+		  	var name = prompt("Enter your character's name");
+		  	socket.emit('player join', name);
+		  });
+
+		  socket.on("player joined", function(player) {
+		  	players.push(player);
+		  	// TODO hook this up with an event
+		  });
+
 		</script>
-		hello world
+		<div id="players"></div>
 	</body>
 </html>
