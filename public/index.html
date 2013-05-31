@@ -5,9 +5,13 @@
 		<script src="/js/jquery-2.0.2.min.js"></script>
 	</head>
 	<body>
+		<ul id="players"></ul>
+		<canvas id="map">
+		</canvas>
 		<script>
 		  var socket = io.connect("/");
 		  var players = [];
+		  var context = document.getElementById('map').getContext('2d');
 
 		  var redrawPlayerList = function() {
 		  	var playersList = $('#players');
@@ -15,6 +19,22 @@
 		  	
 		  	players.forEach(function(player) {
 		  		playersList.append($('<li>', { text: player.name }));
+		  	});
+		  };
+
+		  var drawPlayer = function(context, player) {
+		  	context.strokeStyle = '#000000';
+		  	context.fillStyle = player.color;
+		  	context.beginPath();
+		  	context.arc(player.x, player.y, 10, 0, Math.PI * 2, true);
+		  	context.closePath();
+		  	context.stroke();
+		  	context.fill();
+		  };
+
+		  var redrawMap = function() {
+		  	players.forEach(function(player) {
+		  		drawPlayer(context, player);
 		  	});
 		  };
 
@@ -28,6 +48,7 @@
 		  	
 		  	// TODO hook this up with an event
 		  	redrawPlayerList();
+		  	redrawMap();
 		  });
 
 		  socket.on("player left", function(playerThatLeft) {
@@ -40,6 +61,6 @@
 		  });
 
 		</script>
-		<ul id="players"></ul>
+
 	</body>
 </html>

@@ -9,6 +9,12 @@ app.use(express.static(__dirname + "/public"));
 // TODO reids or something
 var players = [];
 
+var randomColor = function() {
+	var colors = ['#1b1224', '#dd0000', '#e52d00', '#007fff', '#014421', '#4d2177', '#9cb426'];
+
+	return colors[_.random(0, colors.length - 1)];
+};
+
 app.get("/", function(request, response) {
 	response.render('index.html');
 });
@@ -20,7 +26,7 @@ io.sockets.on("connection", function(socket) {
 	});
 
 	socket.on("player join", function(name) {
-		var player = { id: socket.id ,name: name, x: 0, y: 0 };
+		var player = { id: socket.id ,name: name, x: 0, y: 0, color: randomColor() };
 
 		players.push(player);
 		io.sockets.emit('player joined', player);
