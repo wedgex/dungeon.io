@@ -2,6 +2,7 @@
 	<head>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/underscore-min.js"></script>
+		<script src="/js/jquery-2.0.2.min.js"></script>
 	</head>
 	<body>
 		<script>
@@ -9,15 +10,11 @@
 		  var players = [];
 
 		  var redrawPlayerList = function() {
-		  	var playersList = document.getElementById('players');
-		  	playersList.innerHTML = "";
-
-		  	players.forEach(function(player) {		  		
-		  		var li = document.createElement("li"),
-		  			  playerText = document.createTextNode(player.name);
-
-		  		li.appendChild(playerText);
-		  		playersList.appendChild(li);
+		  	var playersList = $('#players');
+		  	playersList.empty();
+		  	
+		  	players.forEach(function(player) {
+		  		playersList.append($('<li>', { text: player.name }));
 		  	});
 		  };
 
@@ -38,6 +35,7 @@
 		  		return player.id == playerThatLeft.id;
 		  	});
 
+		  	// TODO
 		  	redrawPlayerList();
 		  });
 
