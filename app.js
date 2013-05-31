@@ -14,6 +14,10 @@ app.get("/", function(request, response) {
 
 io.sockets.on("connection", function(socket) {
 	
+	players.forEach(function(player) {
+		socket.emit('player joined', player);
+	});
+
 	socket.on("player join", function(name) {
 		var player = { id: socket.id ,name: name, x: 0, y: 0 };
 
