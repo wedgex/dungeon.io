@@ -29,16 +29,16 @@
 		  });
 
 		  socket.on("player joined", function(player) {
+		  	player.marker = new fabric.Triangle({
+  				width: 30, height: 30, fill: player.color, left: 50, top: 50, angle: 180, strokeWidth: 5, stroke: 'red'
+			});
+
 		  	players.push(player);
 		  	
 		  	// TODO hook this up with an event
 		  	redrawPlayerList();
 
-		  	var marker = new fabric.Triangle({
-  				width: 30, height: 30, fill: player.color, left: 50, top: 50, angle: 180, strokeWidth: 5, stroke: 'red'
-			});
-
-			canvas.add(marker);
+			canvas.add(player.marker);
 		  });
 
 		  socket.on("player left", function(playerThatLeft) {
