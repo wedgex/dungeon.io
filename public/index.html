@@ -19,7 +19,9 @@
 		  	playersList.empty();
 		  	
 		  	players.forEach(function(player) {
-		  		playersList.append($('<li>', { text: player.name }));
+          var playerLi = $('<li>', { text: player.name });
+          playerLi.css('color', player.color);
+		  		playersList.append(playerLi);
 		  	});
 		  };
 
