@@ -3,7 +3,7 @@
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/underscore-min.js"></script>
 		<script src="/js/jquery-2.0.2.min.js"></script>
-		<script src="/js/parser.min.js"></script>
+		<script src="/js/fabric.min.js"></script>
 	</head>
 	<body>
 		<ul id="players"></ul>
@@ -12,7 +12,7 @@
 		<script>
 		  var socket = io.connect("/");
 		  var players = [];
-		  var canvas = new fabric.StaticCanvas('map');
+		  var canvas = new fabric.Canvas('map', { selection: false, hoverCursor: 'pointer'  });
 
 		  var redrawPlayerList = function() {
 		  	var playersList = $('#players');
@@ -30,7 +30,15 @@
 
 		  socket.on("player joined", function(player) {
 		  	player.marker = new fabric.Triangle({
-  				width: 30, height: 30, fill: player.color, left: 50, top: 50, angle: 180, strokeWidth: 5, stroke: 'red'
+  				width: 30, height: 30, fill: player.color, left: 50, top: 50, angle: 180, strokeWidth: 5, stroke: 'black', hasControls: false, hasBorders: false
+			});
+
+			player.marker.on("moving", function(mark) {
+				player.marker.stroke = player.color;
+			});
+
+			player.marker.on("modified", function(mark) {
+				player.marker.stroke = 'black';
 			});
 
 		  	players.push(player);
