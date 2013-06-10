@@ -34,7 +34,7 @@ io.sockets.on("connection", function(socket) {
 	});
 
 	socket.on("player join", function(name) {
-		var player = { id: socket.id ,name: name, x: 0, y: 0, color: randomColor(), borderColor: 'black' };
+		var player = { id: socket.id ,name: name, x: 15, y: 15, color: randomColor(), borderColor: 'black' };
 
 		players.push(player);
 		io.sockets.emit('player joined', player);
