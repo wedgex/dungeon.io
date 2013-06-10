@@ -4,6 +4,11 @@ var express = require("express"),
 		io = require("socket.io").listen(server),
 		_ = require("underscore");
 
+io.configure(function() {
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10);
+});
+
 app.use(express.static(__dirname + "/public"));
 
 // TODO reids or something
