@@ -21,6 +21,7 @@
 		  var players = [];
 		  var canvas = new createjs.Stage('map');
       // poor naming choice
+      canvas.canvas.onselectstart = function () { return false; }
       canvas.canvas.height = 1000;
       canvas.canvas.width = 1000;
       canvas.enableMouseOver(55);
