@@ -3,7 +3,7 @@
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/underscore-min.js"></script>
 		<script src="/js/jquery-2.0.2.min.js"></script>
-		<script src="/js/fabric.min.js"></script>
+		<script src="http://code.createjs.com/createjs-2013.05.14.min.js"></script>
 	</head>
 	<body>
 		<ul id="players"></ul>
@@ -11,8 +11,10 @@
 		</canvas>
 		<script>
 		  var socket = io.connect("/");
+      var playerId;
 		  var players = [];
-		  var canvas = new fabric.Canvas('map', { selection: false, hoverCursor: 'pointer' });
+		  var canvas = new createjs.Stage('map');
+      canvas.enableMouseOver(55);
 
 		  var redrawPlayerList = function() {
 		  	var playersList = $('#players');
@@ -30,34 +32,43 @@
 		  	socket.emit('player join', name);
 		  });
 
+      socket.on('set player id', function(id) {
+        playerId = id;
+      });
+
 		  socket.on("player joined", function(player) {
-		  	player.marker = new fabric.Triangle({
-				  width: 30,
-				  height: 30,
-				  fill: player.color,
-				  left: 50,
-				  top: 50,
-				  angle: 180,
-				  strokeWidth: 5,
-				  stroke: 'black',
-				  hasControls: false,
-				  hasBorders: false
-			  });
+		  	var circle = new createjs.Shape();
+        circle.graphics.setStrokeStyle(3).beginStroke(player.borderColor).beginFill(player.color).drawCircle(0, 0, 15);
+        circle.x = player.x;
+        circle.y = player.y;
 
-			  player.marker.on("moving", function(mark) {
-				  player.marker.stroke = player.color;
-			  });
+        circle.onPress = function(e) {
+          document.body.style.cursor='pointer';
 
-			  player.marker.on("modified", function(mark) {
-				  player.marker.stroke = 'black';
-			  });
+          e.onMouseMove = function(ev) {
+            e.target.x = ev.stageX;
+            e.target.y = ev.stageY;
+            socket.emit('player moved', player.id, playerId, ev.stageX, ev.stageY);
+          };
+        };
 
-		    players.push(player);
+        circle.onMouseOver = function(e) {
+          console.log('over');
+          document.body.style.cursor='pointer';
+        };
+
+        circle.onMouseOut = function(e) {
+          document.body.style.cursor='default';
+        }; 
+        
+        player.marker = circle;
+
+        players.push(player);
 		  	
 		    // TODO hook this up with an event
 		    redrawPlayerList();
 
-			  canvas.add(player.marker);
+			  canvas.addChild(player.marker);
 		  });
 
 		  socket.on("player left", function(playerThatLeft) {
@@ -69,6 +80,12 @@
 		  	redrawPlayerList();
 		  });
 
+       
+      function tick() { 
+        canvas.update(); 
+      } 
+
+      setInterval(tick, 15); 
 		</script>
 
 	</body>

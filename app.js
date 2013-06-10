@@ -26,19 +26,23 @@ app.get("/", function(request, response) {
 });
 
 io.sockets.on("connection", function(socket) {
+
+  socket.emit('set player id', socket.id);
 	
 	players.forEach(function(player) {
 		socket.emit('player joined', player);
 	});
 
 	socket.on("player join", function(name) {
-		var player = { id: socket.id ,name: name, x: 0, y: 0, color: randomColor() };
+		var player = { id: socket.id ,name: name, x: 0, y: 0, color: randomColor(), borderColor: 'black' };
 
 		players.push(player);
 		io.sockets.emit('player joined', player);
 	});
 
   socket.on("player moved", function(playerId, moverId, x, y) {
+    console.log(playerId);
+    console.log(moverId);
     var player = findPlayerById(playerId);
     var mover = findPlayerById(moverId);
 
