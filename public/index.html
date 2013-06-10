@@ -50,6 +50,10 @@
             e.target.y = ev.stageY;
             socket.emit('player moved', player.id, playerId, ev.stageX, ev.stageY);
           };
+
+          e.onMouseUp = function(ev) {
+            socket.emit('player released', player.id);
+          };
         };
 
         circle.onMouseOver = function(e) {
@@ -72,12 +76,18 @@
 		  });
 
 		  socket.on("player left", function(playerThatLeft) {
-		  	players = _.reject(players, function(player) {
-		  		return player.id == playerThatLeft.id;
+        var player = _.find(players, function(p) {
+          return p.id == playerThatLeft.id;
+        });
+
+		  	players = _.reject(players, function(p) {
+		  		return p.id == playerThatLeft.id;
 		  	});
 
 		  	// TODO
 		  	redrawPlayerList();
+
+        canvas.removeChild(player.marker);
 		  });
 
       socket.on("player updated", function(updatedPlayer) {
@@ -87,7 +97,8 @@
 
         player.marker.x = updatedPlayer.x;
         player.marker.y = updatedPlayer.y;
-        player.marker.setStroke(updatedPlayer.borderColor);
+        player.borderColor = updatedPlayer.borderColor;
+        player.marker.graphics.beginStroke(player.borderColor).drawCircle(0, 0, 15);
       });
 
        

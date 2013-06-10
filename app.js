@@ -53,6 +53,13 @@ io.sockets.on("connection", function(socket) {
     io.sockets.emit('player updated', player);
   });
 
+  socket.on("player released", function(playerId) {
+    var player = findPlayerById(playerId);
+    player.borderColor = 'black';
+
+    io.sockets.emit('player updated', player);
+  });
+
 	socket.on("disconnect", function() {
     var player = findPlayerById(socket.id);
 
