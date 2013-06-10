@@ -50,7 +50,7 @@ io.sockets.on("connection", function(socket) {
     player.y = y;
     player.borderColor = mover.color;
 
-    io.sockets.emit('player updated', player);
+    socket.broadcast.emit('player updated', player);
   });
 
   socket.on("player released", function(playerId) {
