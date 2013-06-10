@@ -50,9 +50,7 @@ io.sockets.on("connection", function(socket) {
   });
 
 	socket.on("disconnect", function() {
-		var player = _.find(players, function(p) {
-			return p.id == socket.id;
-		});
+    var player = findPlayerById(socket.id);
 
 		players = _.reject(players, function(p) {
 			return p.id == player.id;
