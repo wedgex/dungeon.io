@@ -80,6 +80,16 @@
 		  	redrawPlayerList();
 		  });
 
+      socket.on("player updated", function(updatedPlayer) {
+        var player = _.find(players, function(p) {
+          return p.id == updatedPlayer.id;
+        });
+
+        player.marker.x = updatedPlayer.x;
+        player.marker.y = updatedPlayer.y;
+        player.marker.setStroke(updatedPlayer.borderColor);
+      });
+
        
       function tick() { 
         canvas.update(); 
