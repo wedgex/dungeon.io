@@ -4,6 +4,12 @@
 		<script src="/js/underscore-min.js"></script>
 		<script src="/js/jquery-2.0.2.min.js"></script>
 		<script src="http://code.createjs.com/createjs-2013.05.14.min.js"></script>
+
+    <style>
+      #map {
+        background-image:url("map.jpg");
+      }
+    </style>
 	</head>
 	<body>
 		<ul id="players"></ul>
@@ -14,6 +20,9 @@
       var playerId;
 		  var players = [];
 		  var canvas = new createjs.Stage('map');
+      // poor naming choice
+      canvas.canvas.height = 1000;
+      canvas.canvas.width = 1000;
       canvas.enableMouseOver(55);
 
 		  var redrawPlayerList = function() {
