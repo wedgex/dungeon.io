@@ -126,7 +126,7 @@
       });
 
 		  socket.on("player joined", function(player) {
-        player = new Player(player);        
+        var player = new Player(player);        
 
         players.add(player);
 		  	
@@ -135,6 +135,7 @@
 
 		  socket.on("player left", function(playerThatLeft) {
         var player = players.get(playerThatLeft.id)
+
         players.remove(player);
 
         canvas.removeChild(player.marker);
