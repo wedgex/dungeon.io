@@ -90,16 +90,31 @@
       canvas.canvas.width = 1000;
       canvas.enableMouseOver(55);
 
-		  var redrawPlayerList = function() {
-		  	var playersList = $('#players');
-		  	playersList.empty();
-		  	
-		  	players.forEach(function(player) {
-          var playerLi = $('<li>', { text: player.get('name') });
+      var PlayerListView = Backbone.View.extend({
+        el: '#players',
+        collection: players,
+        initialize: function() {
+          this.listenTo(this.collection, 'add', this.addPlayer);
+          this.listenTo(this.collection, 'remove', this.removePlayer);
+          this.render();
+        },
+        render: function() {
+          this.collection.forEach(function(player) {
+            this.addPlayer(player);
+          });
+        },
+        addPlayer: function(player) {
+          var playerLi = $('<li>', { text: player.get('name'), 'data-id': player.get('id') });
           playerLi.css('color', player.get('color'));
-		  		playersList.append(playerLi);
-		  	});
-		  };
+
+          this.$el.append(playerLi);
+        },
+        removePlayer: function(player) {
+          this.$el.find('[data-id="' + player.get('id') + '"]').remove();
+        }
+      });
+
+      var playersListView = new PlayerListView();
 
 		  socket.on("connect", function() {
 		  	var name = prompt("Enter your character's name");
@@ -113,25 +128,14 @@
 		  socket.on("player joined", function(player) {
         player = new Player(player);        
 
-        players.push(player);
+        players.add(player);
 		  	
-		    // TODO hook this up with an event
-		    redrawPlayerList();
-
 			  canvas.addChild(player.get('marker'));
 		  });
 
 		  socket.on("player left", function(playerThatLeft) {
-        var player = _.find(players, function(p) {
-          return p.id == playerThatLeft.id;
-        });
-
-		  	players = _.reject(players, function(p) {
-		  		return p.id == playerThatLeft.id;
-		  	});
-
-		  	// TODO
-		  	redrawPlayerList();
+        var player = players.get(playerThatLeft.id)
+        players.remove(player);
 
         canvas.removeChild(player.marker);
 		  });
