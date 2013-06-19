@@ -3,6 +3,7 @@
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/js/underscore-min.js"></script>
 		<script src="/js/jquery-2.0.2.min.js"></script>
+		<script src="/js/backbone-min.js"></script>
 		<script src="http://code.createjs.com/createjs-2013.05.14.min.js"></script>
 
     <style>
@@ -17,6 +18,45 @@
 		</canvas>
 		<script>
 		  var socket = io.connect("/");
+
+      var Player = Backbone.Model.extend({
+        initialize: function() {
+          var self = this;
+          var circle = new createjs.Shape();
+          circle.graphics
+            .setStrokeStyle(3)
+            .beginStroke(this.attributes.borderColor)
+            .beginFill(this.attributes.color)
+            .drawCircle(0, 0, 15);
+          circle.x = this.attributes.x;
+          circle.y = this.attributes.y;
+
+          circle.onPress = function(e) {
+            document.body.style.cursor='pointer';
+
+            e.onMouseMove = function(ev) {
+              e.target.x = ev.stageX;
+              e.target.y = ev.stageY;
+              socket.emit('player moved', self.attributes.id, playerId, ev.stageX, ev.stageY);
+            };
+
+            e.onMouseUp = function(ev) {
+              socket.emit('player released', self.attributes.id);
+            };
+          };
+
+          circle.onMouseOver = function(e) {
+            document.body.style.cursor='pointer';
+          };
+
+          circle.onMouseOut = function(e) {
+            document.body.style.cursor='default';
+          }; 
+
+          this.set('marker', circle);
+        }
+      });
+
       var playerId;
 		  var players = [];
 		  var canvas = new createjs.Stage('map');
@@ -31,8 +71,8 @@
 		  	playersList.empty();
 		  	
 		  	players.forEach(function(player) {
-          var playerLi = $('<li>', { text: player.name });
-          playerLi.css('color', player.color);
+          var playerLi = $('<li>', { text: player.get('name') });
+          playerLi.css('color', player.get('color'));
 		  		playersList.append(playerLi);
 		  	});
 		  };
@@ -47,41 +87,14 @@
       });
 
 		  socket.on("player joined", function(player) {
-		  	var circle = new createjs.Shape();
-        circle.graphics.setStrokeStyle(3).beginStroke(player.borderColor).beginFill(player.color).drawCircle(0, 0, 15);
-        circle.x = player.x;
-        circle.y = player.y;
-
-        circle.onPress = function(e) {
-          document.body.style.cursor='pointer';
-
-          e.onMouseMove = function(ev) {
-            e.target.x = ev.stageX;
-            e.target.y = ev.stageY;
-            socket.emit('player moved', player.id, playerId, ev.stageX, ev.stageY);
-          };
-
-          e.onMouseUp = function(ev) {
-            socket.emit('player released', player.id);
-          };
-        };
-
-        circle.onMouseOver = function(e) {
-          document.body.style.cursor='pointer';
-        };
-
-        circle.onMouseOut = function(e) {
-          document.body.style.cursor='default';
-        }; 
-        
-        player.marker = circle;
+        player = new Player(player);        
 
         players.push(player);
 		  	
 		    // TODO hook this up with an event
 		    redrawPlayerList();
 
-			  canvas.addChild(player.marker);
+			  canvas.addChild(player.get('marker'));
 		  });
 
 		  socket.on("player left", function(playerThatLeft) {
@@ -104,10 +117,10 @@
           return p.id == updatedPlayer.id;
         });
 
-        player.marker.x = updatedPlayer.x;
-        player.marker.y = updatedPlayer.y;
-        player.borderColor = updatedPlayer.borderColor;
-        player.marker.graphics.beginStroke(player.borderColor).drawCircle(0, 0, 15);
+        player.get('marker').x = updatedPlayer.x;
+        player.get('marker').y = updatedPlayer.y;
+        player.set('borderColor', updatedPlayer.borderColor);
+        player.get('marker').graphics.beginStroke(player.get('borderColor')).drawCircle(0, 0, 15);
       });
 
        
