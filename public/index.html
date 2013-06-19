@@ -77,8 +77,12 @@
         }
       });
 
+      var PlayerList = Backbone.Collection.extend({
+        model: Player
+      });
+
       var playerId;
-		  var players = [];
+		  var players = new PlayerList();
 		  var canvas = new createjs.Stage('map');
       // poor naming choice
       canvas.canvas.onselectstart = function () { return false; }
