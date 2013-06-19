@@ -54,6 +54,26 @@
           }; 
 
           this.set('marker', circle);
+
+          this.on('change:y', function(player) {
+            self.get('marker').y = player.get('y'); 
+          });
+
+          this.on('change:x', function(player) {
+            self.get('marker').x = player.get('x'); 
+          });
+
+          this.on('change:borderColor', function(player) {
+            self.get('marker').x = player.get('x'); 
+          });
+
+          this.on('change', function(player) {
+            player.redrawMarker();
+          });
+        },
+
+        redrawMarker: function() {
+          this.get('marker').graphics.beginStroke(this.get('borderColor')).drawCircle(0, 0, 15);
         }
       });
 
@@ -117,10 +137,11 @@
           return p.id == updatedPlayer.id;
         });
 
-        player.get('marker').x = updatedPlayer.x;
-        player.get('marker').y = updatedPlayer.y;
-        player.set('borderColor', updatedPlayer.borderColor);
-        player.get('marker').graphics.beginStroke(player.get('borderColor')).drawCircle(0, 0, 15);
+        player.set({
+          'x': updatedPlayer.x,
+          'y': updatedPlayer.y,
+          'borderColor': updatedPlayer.borderColor
+        });
       });
 
        
